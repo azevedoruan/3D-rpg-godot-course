@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://c6durlftx2yyk"]
+
+[ext_resource type="Script" uid="uid://3ut4wseboade" path="res://player/dash.gd" id="1_ywr6a"]
+
+[sub_resource type="Curve" id="Curve_ywr6a"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.3354433, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dxhus"]
+curve = SubResource("Curve_ywr6a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_i3jmb"]
+emission_shape_scale = Vector3(1, 0.25, 1)
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 1, 0)
+damping_max = 1.0
+scale_min = 0.19999999
+scale_max = 0.39999998
+scale_curve = SubResource("CurveTexture_dxhus")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ywr6a"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_xbtvb"]
+material = SubResource("StandardMaterial3D_ywr6a")
+
+[node name="Dash" type="Node3D" unique_id=410199331]
+script = ExtResource("1_ywr6a")
+speed_multiplier = 7.0
+
+[node name="Timer" type="Timer" parent="." unique_id=578679111]
+one_shot = true
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=1000783220]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.02367127)
+cast_shadow = 0
+emitting = false
+amount = 32
+lifetime = 0.5
+trail_lifetime = 0.5
+process_material = SubResource("ParticleProcessMaterial_i3jmb")
+draw_pass_1 = SubResource("SphereMesh_xbtvb")

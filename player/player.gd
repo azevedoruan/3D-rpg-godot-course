@@ -1,0 +1,145 @@
+class_name Player extends CharacterBody3D
+
+const SPEED := 5.0
+const JUMP_VELOCITY := 4.5
+const DECAY := 10.0
+
+# Store the x and y direction the player is trying to look in.
+var _look := Vector2.ZERO
+# Store the direction the player moves when attacking.
+var _attack_direction := Vector3.ZERO
+
+@export_category("RPG Stats")
+@export var stats: CharacterStats
+
+@export_category("Character Configs")
+@export var mouse_sensitivity: float = 0.00075
+@export var min_boundary: float = -60.0
+@export var max_boundary: float = 10.0
+@export var animation_decay: float = 20.0
+@export var attack_move_speed: float = 3.0
+
+@onready var horizontal_pivot: Node3D = $HorizontalPivot
+@onready var vertical_pivot: Node3D = $HorizontalPivot/VerticalPivot
+@onready var spring_arm_cam: SpringArm3D = $SmoothCameraArm
+@onready var rig_pivot: Node3D = $RigPivot
+@onready var rig: Rig = $RigPivot/Rig
+@onready var attack_cast: RayCast3D = %AttackCast
+@onready var health_component: HealthComponent = $HealthComponent
+@onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
+@onready var area_attack: AreaAttack = $RigPivot/AreaAttack
+
+
+func _ready() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	health_component.update_max_health(30.0)
+
+
+func _physics_process(delta: float) -> void:
+	_frame_camera_rotation()
+	var direction := get_movement_direction()
+	rig.update_animation_tree(direction)
+	_handle_idle_physics_process(direction, delta)
+	_handle_slashing_physics_frame(delta)
+	_handle_overhead_physics_frame(delta)
+	
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	
+	move_and_slide()
+
+
+func _frame_camera_rotation() -> void:
+	horizontal_pivot.rotate_y(_look.x)
+	vertical_pivot.rotate_x(_look.y)
+	
+	# bounds camera's rotation
+	vertical_pivot.rotation.x = clampf(
+		vertical_pivot.rotation.x,
+		deg_to_rad(min_boundary),
+		deg_to_rad(max_boundary)
+	)
+	
+	_look = Vector2.ZERO
+
+
+func get_movement_direction() -> Vector3:
+	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var input_vector := Vector3(input_dir.x, 0, input_dir.y).normalized()
+	return horizontal_pivot.global_transform.basis * input_vector
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if rig.is_idle():
+		if event.is_action_pressed("click"):
+			slash_attack()
+		elif event.is_action_pressed("right_click"):
+			heavy_attack()
+	
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if event is InputEventMouseMotion:
+			_look += -event.relative * mouse_sensitivity # is adding because of the difference time's update physic process
+
+
+func _look_toward_direction(direction: Vector3, delta: float) -> void:
+	var target_transform := rig_pivot.global_transform.looking_at(
+		rig_pivot.global_position + direction, Vector3.UP, true
+	)
+	
+	# Smooth rig turn
+	rig_pivot.global_transform = rig_pivot.global_transform.interpolate_with(
+		target_transform,
+		1.0 - exp(-animation_decay * delta) # technique to update transforms frame independent
+	)
+
+
+func _handle_slashing_physics_frame(delta: float) -> void:
+	if rig.is_slashing():
+		velocity.x = _attack_direction.x * attack_move_speed
+		velocity.z = _attack_direction.z * attack_move_speed
+		_look_toward_direction(_attack_direction, delta)
+		attack_cast.deal_damage()
+
+
+func _handle_overhead_physics_frame(_delta: float) -> void:
+	if rig.is_overhead():
+		velocity.x = 0.0
+		velocity.z = 0.0
+
+
+func _handle_idle_physics_process(direction: Vector3, delta: float) -> void:
+	if rig.is_idle() or rig.is_dashing():
+		velocity.x = _exponential_decay(velocity.x, direction.x * SPEED, DECAY, delta)
+		velocity.z = _exponential_decay(velocity.z, direction.z * SPEED, DECAY, delta)
+		
+		if direction:
+			_look_toward_direction(direction, delta)
+
+
+func slash_attack() -> void:
+	rig.travel("Slash")
+	_attack_direction = get_movement_direction()
+	if _attack_direction.is_zero_approx():
+		_attack_direction = rig.global_basis * Vector3(0, 0, 1)
+		attack_cast.clear_exceptions()
+
+
+func heavy_attack() -> void:
+	rig.travel("Overhead")
+
+
+func _on_health_component_defeat() -> void:
+	rig.travel("Defeat")
+	collision_shape_3d.disabled = true
+	set_physics_process(false)
+
+
+func _on_rig_heavy_attack() -> void:
+	area_attack.deal_damage(20.0)
+
+
+func _exponential_decay(a: float, b: float, decay: float, delta: float) -> float:
+	return b + (a - b) * exp(-decay * delta)
