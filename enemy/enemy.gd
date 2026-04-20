@@ -7,6 +7,7 @@ class_name Enemy extends CharacterBody3D
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 @onready var player_detector: ShapeCast3D = $Rig/PlayerDetector
 @onready var area_attack: AreaAttack = $AreaAttack
+@onready var player: Player = get_tree().get_first_node_in_group("player")
 
 
 func _ready() -> void:
@@ -28,6 +29,7 @@ func check_for_attacks() -> void:
 
 
 func die() -> void:
+	player.stats.level_up()
 	rig.travel("Defeat")
 	collision_shape_3d.disabled = true
 	set_physics_process(false)
