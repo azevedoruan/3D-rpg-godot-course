@@ -22,7 +22,14 @@ class Ability:
 
 
 var level := 1
-var xp := 0
+var xp := 0:
+	set(value):
+		xp = value
+		var boundary = percentage_level_up_boundary()
+		while xp > boundary:
+			xp -= boundary
+			level_up()
+			boundary = percentage_level_up_boundary()
 
 var strenght := Ability.new(2.0, 12.0) # Damage bonus on attack.
 var speed := Ability.new(3.0, 7.0) # Movement speed in m/s.
@@ -44,8 +51,10 @@ func level_up() -> void:
 	agility.increase()
 	speed.increase()
 	endurance.increase()
-	printt(strenght.ability_score,
-		agility.ability_score,
-		speed.ability_score,
-		endurance.ability_score
-	)
+	print("level up: ", level)
+
+func percentage_level_up_boundary() -> int:
+	return int(50 * pow(1.2, level))
+
+func cubic_level_up_boundary() -> int:
+	return int(50 + pow(level, 3))

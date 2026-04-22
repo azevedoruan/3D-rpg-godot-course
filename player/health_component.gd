@@ -12,7 +12,6 @@ var current_health: float:
 		if current_health == 0.0:
 			defeat.emit()
 		health_changed.emit()
-		print("hit")
 	get:
 		return current_health
 

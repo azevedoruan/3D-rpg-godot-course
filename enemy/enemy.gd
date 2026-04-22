@@ -1,6 +1,7 @@
 class_name Enemy extends CharacterBody3D
 
 @export var max_health: float = 20.0
+@export var xp_value: int = 25
 
 @onready var rig: Rig = $Rig
 @onready var health_component: HealthComponent = $HealthComponent
@@ -29,7 +30,7 @@ func check_for_attacks() -> void:
 
 
 func die() -> void:
-	player.stats.level_up()
+	player.stats.xp += xp_value
 	rig.travel("Defeat")
 	collision_shape_3d.disabled = true
 	set_physics_process(false)
