@@ -1,6 +1,5 @@
 class_name Player extends CharacterBody3D
 
-const SPEED := 5.0
 const JUMP_VELOCITY := 4.5
 const DECAY := 10.0
 
@@ -73,11 +72,16 @@ func get_movement_direction() -> Vector3:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
 	if rig.is_idle():
 		if event.is_action_pressed("click"):
 			slash_attack()
 		elif event.is_action_pressed("right_click"):
 			heavy_attack()
+	
+	if event.is_action_pressed("debug_gain_xp"):
+		stats.xp += 10000
+		print(stats.level)
 	
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		if event is InputEventMouseMotion:
@@ -101,7 +105,7 @@ func _handle_slashing_physics_frame(delta: float) -> void:
 		velocity.x = _attack_direction.x * attack_move_speed
 		velocity.z = _attack_direction.z * attack_move_speed
 		_look_toward_direction(_attack_direction, delta)
-		attack_cast.deal_damage()
+		attack_cast.deal_damage(10.0 + stats.get_damage_modifier(), stats.get_crit_chance())
 
 
 func _handle_overhead_physics_frame(_delta: float) -> void:
@@ -112,8 +116,8 @@ func _handle_overhead_physics_frame(_delta: float) -> void:
 
 func _handle_idle_physics_process(direction: Vector3, delta: float) -> void:
 	if rig.is_idle() or rig.is_dashing():
-		velocity.x = _exponential_decay(velocity.x, direction.x * SPEED, DECAY, delta)
-		velocity.z = _exponential_decay(velocity.z, direction.z * SPEED, DECAY, delta)
+		velocity.x = _exponential_decay(velocity.x, direction.x * stats.get_base_speed(), DECAY, delta)
+		velocity.z = _exponential_decay(velocity.z, direction.z * stats.get_base_speed(), DECAY, delta)
 		
 		if direction:
 			_look_toward_direction(direction, delta)
@@ -138,7 +142,7 @@ func _on_health_component_defeat() -> void:
 
 
 func _on_rig_heavy_attack() -> void:
-	area_attack.deal_damage(20.0)
+	area_attack.deal_damage(20.0 + stats.get_damage_modifier(), stats.get_crit_chance())
 
 
 func _exponential_decay(a: float, b: float, decay: float, delta: float) -> float:

@@ -37,4 +37,4 @@ func die() -> void:
 
 
 func _on_rig_heavy_attack() -> void:
-	area_attack.deal_damage(20.0)
+	area_attack.deal_damage(20.0, 0.0)
