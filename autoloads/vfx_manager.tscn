@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://4dpy4bxjwufw"]
+
+[ext_resource type="Script" uid="uid://da1qhfnt3jy03" path="res://autoloads/vfx_manager.gd" id="1_mf5oi"]
+
+[node name="VFXManager" type="Node3D" unique_id=1882788039]
+script = ExtResource("1_mf5oi")

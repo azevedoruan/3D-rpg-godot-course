@@ -1,8 +1,9 @@
 class_name HealthComponent extends Node
 
-
 signal defeat()
 signal health_changed()
+
+@export var body: PhysicsBody3D
 
 
 var max_health: float
@@ -23,7 +24,9 @@ func update_max_health(max_hp_in: float) -> void:
 
 func take_damage(damage_in: float, is_critical: bool) -> void:
 	var damage: float = damage_in
+	var color: Color = Color.WHITE
 	if is_critical:
 		damage *= 2.0
-		print("critical! ", damage)
+		color = Color.RED
 	current_health -= damage
+	VfxManager.spawn_damage_number(int(damage), color, body.global_position)
