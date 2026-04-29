@@ -23,7 +23,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		# dash only if player is moving
 		if not direction.is_zero_approx():
 			player.rig.travel("Dash")
-			timer.start(1.0)
+			timer.start(player.stats.get_dash_cooldown())
 			time_remaining = dash_duration
 			gpu_particles_3d.emitting = true
 
