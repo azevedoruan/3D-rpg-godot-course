@@ -1,5 +1,8 @@
 class_name CharacterStats extends Resource
 
+signal level_up_notification()
+signal update_stats()
+
 class Ability:
 	var min_modifier: float
 	var max_modifier: float
@@ -20,7 +23,6 @@ class Ability:
 	func increase() -> void:
 		ability_score += randi_range(2, 5)
 
-signal level_up_notification()
 
 const MIN_DASH_COOLDOWN: float = 1.5
 const MAX_DASH_COOLDOWN: float = 0.5
@@ -34,6 +36,7 @@ var xp := 0:
 			xp -= boundary
 			level_up()
 			boundary = percentage_level_up_boundary()
+		update_stats.emit()
 
 var strenght := Ability.new(2.0, 12.0) # Damage bonus on attack.
 var speed := Ability.new(3.0, 7.0) # Movement speed in m/s.

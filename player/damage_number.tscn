@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d4liehneud7wb"]
 
 [ext_resource type="Script" uid="uid://cn6tv0mcxykiw" path="res://player/damage_number.gd" id="1_alx73"]
+[ext_resource type="FontFile" uid="uid://5qil480hwj75" path="res://assets/Fonts/Libre_Caslon_Text/LibreCaslonText-Bold.ttf" id="2_am74p"]
 
 [sub_resource type="Animation" id="Animation_am74p"]
 length = 0.001
@@ -83,6 +84,7 @@ script = ExtResource("1_alx73")
 billboard = 1
 no_depth_test = true
 text = "999"
+font = ExtResource("2_am74p")
 font_size = 64
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1273022668]
