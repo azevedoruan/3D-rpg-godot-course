@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://01tqcajtgh7"]
+
+[ext_resource type="Texture2D" uid="uid://d4geqmblmtvc4" path="res://assets/UIAssets/Window/window_header.png" id="1_hhbwd"]
+[ext_resource type="FontFile" uid="uid://5qil480hwj75" path="res://assets/Fonts/Libre_Caslon_Text/LibreCaslonText-Bold.ttf" id="2_u7gih"]
+
+[sub_resource type="Gradient" id="Gradient_5vwyw"]
+offsets = PackedFloat32Array(0, 0.8, 0.9)
+colors = PackedColorArray(0.1254902, 0.08627451, 0.11372549, 1, 0.67058825, 0.1764706, 0.16470589, 1, 0.6627451, 0.41960785, 0.2, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5vwyw"]
+gradient = SubResource("Gradient_5vwyw")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_faefm"]
+font = ExtResource("2_u7gih")
+font_size = 48
+
+[node name="Inventory" type="Control" unique_id=1215736133]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundGradient" type="TextureRect" parent="." unique_id=1430645457]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_5vwyw")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1341996766]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=486007334]
+layout_mode = 2
+
+[node name="HeaderTexture" type="TextureRect" parent="MarginContainer/VBoxContainer" unique_id=139872095]
+layout_mode = 2
+texture = ExtResource("1_hhbwd")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HeaderTexture" unique_id=611526453]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_right = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Inventory"
+label_settings = SubResource("LabelSettings_faefm")
+horizontal_alignment = 1
+vertical_alignment = 1
