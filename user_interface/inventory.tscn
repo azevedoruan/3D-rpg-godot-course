@@ -6,6 +6,9 @@
 [ext_resource type="StyleBox" uid="uid://caofb04xsahw1" path="res://user_interface/ui_panel.tres" id="3_faefm"]
 [ext_resource type="Texture2D" uid="uid://cx8awiagq1xwl" path="res://assets/UIAssets/Icons/spell_slot_empty.png" id="4_j1htc"]
 [ext_resource type="FontFile" uid="uid://by6dhfos4hx7j" path="res://assets/Fonts/Libre_Caslon_Text/LibreCaslonText-Italic.ttf" id="5_xmn4o"]
+[ext_resource type="Texture2D" uid="uid://ccegxbgew1lqi" path="res://assets/UIAssets/Button Small/button_small.png" id="7_snk4l"]
+[ext_resource type="Texture2D" uid="uid://crylevtk3eo6x" path="res://assets/UIAssets/Button Small/button_small_press.png" id="8_pwv8d"]
+[ext_resource type="Texture2D" uid="uid://bbytosroifgxm" path="res://assets/UIAssets/Button Small/button_small_hover.png" id="9_71qgm"]
 
 [sub_resource type="Gradient" id="Gradient_5vwyw"]
 offsets = PackedFloat32Array(0, 0.8, 0.9)
@@ -33,6 +36,11 @@ shadow_color = Color(0, 0, 0, 1)
 font = ExtResource("2_u7gih")
 font_size = 26
 font_color = Color(0.9607843, 0.7176471, 0.36078432, 1)
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_pwv8d"]
+font = ExtResource("2_u7gih")
+font_size = 26
 shadow_color = Color(0, 0, 0, 1)
 
 [node name="Inventory" type="Control" unique_id=1215736133]
@@ -99,6 +107,7 @@ theme_override_styles/panel = ExtResource("3_faefm")
 [node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1841350287]
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
+focus_mode = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1439921234]
 custom_minimum_size = Vector2(384, 0)
@@ -115,7 +124,7 @@ layout_mode = 2
 [node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/CharacterSheet/PanelContainer" unique_id=2072064507]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Level1"
+text = "Level 1"
 label_settings = SubResource("LabelSettings_j1htc")
 horizontal_alignment = 1
 
@@ -234,3 +243,46 @@ layout_mode = 2
 text = "0"
 label_settings = SubResource("LabelSettings_xmn4o")
 horizontal_alignment = 1
+
+[node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/CharacterSheet/PanelContainer" unique_id=1280525965]
+layout_mode = 2
+
+[node name="AttributeName" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/CharacterSheet/PanelContainer/VBoxContainer" unique_id=689304872]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Attack Damage"
+label_settings = SubResource("LabelSettings_ho8fq")
+horizontal_alignment = 1
+uppercase = true
+
+[node name="AttackValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/CharacterSheet/PanelContainer/VBoxContainer" unique_id=1932124994]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_xmn4o")
+horizontal_alignment = 1
+
+[node name="BackButton" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1728231244]
+custom_minimum_size = Vector2(200, 80)
+layout_mode = 2
+size_flags_horizontal = 8
+texture_normal = ExtResource("7_snk4l")
+texture_pressed = ExtResource("8_pwv8d")
+texture_hover = ExtResource("9_71qgm")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/BackButton" unique_id=1749624349]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Back"
+label_settings = SubResource("LabelSettings_pwv8d")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]

@@ -1,4 +1,4 @@
-extends Control
+class_name Inventory extends Control
 
 @onready var level_label: Label = %LevelLabel
 @onready var strength_value: Label = %StrengthValue
@@ -6,6 +6,7 @@ extends Control
 @onready var speed_value: Label = %SpeedValue
 @onready var endurance_value: Label = %EnduranceValue
 @onready var player: Player = get_parent().player
+@onready var attack_value: Label = %AttackValue
 
 func _ready() -> void:
 	update_stats()
@@ -15,3 +16,15 @@ func update_stats() -> void:
 	speed_value.text = str(player.stats.speed.ability_score)
 	agility_value.text = str(player.stats.agility.ability_score)
 	endurance_value.text = str(player.stats.endurance.ability_score)
+	level_label.text = "Level %s" % player.stats.level
+
+func update_gear_stats() -> void:
+	attack_value.text = str(get_weapon_value())
+
+func get_weapon_value() -> float:
+	var damage = 10.0
+	damage += player.stats.get_damage_modifier()
+	return damage
+
+func _on_back_button_pressed() -> void:
+	get_parent().close_menu()
