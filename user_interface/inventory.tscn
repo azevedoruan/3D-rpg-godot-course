@@ -5,6 +5,7 @@
 [ext_resource type="FontFile" uid="uid://5qil480hwj75" path="res://assets/Fonts/Libre_Caslon_Text/LibreCaslonText-Bold.ttf" id="2_u7gih"]
 [ext_resource type="StyleBox" uid="uid://caofb04xsahw1" path="res://user_interface/ui_panel.tres" id="3_faefm"]
 [ext_resource type="Texture2D" uid="uid://cx8awiagq1xwl" path="res://assets/UIAssets/Icons/spell_slot_empty.png" id="4_j1htc"]
+[ext_resource type="PackedScene" uid="uid://b30eq4lc65mbc" path="res://player/rig.tscn" id="5_71qgm"]
 [ext_resource type="FontFile" uid="uid://by6dhfos4hx7j" path="res://assets/Fonts/Libre_Caslon_Text/LibreCaslonText-Italic.ttf" id="5_xmn4o"]
 [ext_resource type="Texture2D" uid="uid://ccegxbgew1lqi" path="res://assets/UIAssets/Button Small/button_small.png" id="7_snk4l"]
 [ext_resource type="Texture2D" uid="uid://crylevtk3eo6x" path="res://assets/UIAssets/Button Small/button_small_press.png" id="8_pwv8d"]
@@ -21,6 +22,22 @@ fill_to = Vector2(0, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_faefm"]
 font = ExtResource("2_u7gih")
 font_size = 48
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rd3vj"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_2q6dc"]
+sky_material = SubResource("ProceduralSkyMaterial_rd3vj")
+
+[sub_resource type="Environment" id="Environment_71qgm"]
+background_mode = 2
+sky = SubResource("Sky_2q6dc")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="World3D" id="World3D_b1d17"]
+environment = SubResource("Environment_71qgm")
 
 [sub_resource type="LabelSettings" id="LabelSettings_j1htc"]
 font = ExtResource("2_u7gih")
@@ -108,6 +125,24 @@ theme_override_styles/panel = ExtResource("3_faefm")
 custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
 focus_mode = 0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/VBoxContainer/HBoxContainer/SubViewportContainer" unique_id=593082981]
+world_3d = SubResource("World3D_b1d17")
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(512, 868)
+render_target_update_mode = 4
+
+[node name="Rig" parent="MarginContainer/VBoxContainer/HBoxContainer/SubViewportContainer/SubViewport" unique_id=1415560072 instance=ExtResource("5_71qgm")]
+
+[node name="Camera3D" type="Camera3D" parent="MarginContainer/VBoxContainer/HBoxContainer/SubViewportContainer/SubViewport" unique_id=311577010]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.065, 0.9, 3)
+fov = 45.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="MarginContainer/VBoxContainer/HBoxContainer/SubViewportContainer/SubViewport" unique_id=1520841557]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1439921234]
 custom_minimum_size = Vector2(384, 0)
