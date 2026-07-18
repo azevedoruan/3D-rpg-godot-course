@@ -12,21 +12,21 @@ signal heavy_attack
 	$CharacterRig/GameRig/Skeleton3D/Villager_02
 ]
 
-var _run_path: String = "parameters/MoveSpace/blend_position"
-var _run_weight_target := -1.0
+var run_path: String = "parameters/MoveSpace/blend_position"
+var run_weight_target := -1.0
 
 func _physics_process(delta: float) -> void:
-	animation_tree[_run_path] = move_toward(
-		animation_tree[_run_path],
-		_run_weight_target,
+	animation_tree[run_path] = move_toward(
+		animation_tree[run_path],
+		run_weight_target,
 		delta * animation_speed
 	)
 
 func update_animation_tree(direction: Vector3) -> void:
 	if direction.is_zero_approx():
-		_run_weight_target = -1.0
+		run_weight_target = -1.0
 	else:
-		_run_weight_target = 1.0
+		run_weight_target = 1.0
 
 func travel(animation_name: String) -> void:
 	playback.travel(animation_name)

@@ -1,15 +1,21 @@
 class_name Enemy extends CharacterBody3D
 
+const RUN_VELOCITY_THRESHOLD := 2.0
+
+var velocity_target := Vector3.ZERO
+
 @export var max_health: float = 20.0
 @export var xp_value: int = 25
+@export var speed: float = 5.0
 
 @onready var rig: Rig = $Rig
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 @onready var player_detector: ShapeCast3D = $Rig/PlayerDetector
 @onready var area_attack: AreaAttack = $AreaAttack
-@onready var player: Player = get_tree().get_first_node_in_group("player")
+@onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
 
+@onready var player: Player = get_tree().get_first_node_in_group("player")
 
 func _ready() -> void:
 	rig.set_active_mesh(rig.villagers_meshes.pick_random())
@@ -18,8 +24,20 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if rig.is_idle():
-		check_for_attacks()
+	navigation_agent_3d.target_position = player.global_position
+	
+	if is_on_floor():
+		velocity_target = Vector3.ZERO
+		if rig.is_idle():
+			check_for_attacks()
+			if not navigation_agent_3d.is_target_reached():
+				velocity_target = get_local_navigation_direction() * speed
+				orient_rig(navigation_agent_3d.get_next_path_position())
+	else:
+		# Add the gravity.
+		velocity_target.y += get_gravity().y * _delta
+	
+	navigation_agent_3d.velocity = velocity_target
 
 
 func check_for_attacks() -> void:
@@ -27,6 +45,7 @@ func check_for_attacks() -> void:
 		var collider = player_detector.get_collider(collision_id)
 		if collider is Player:
 			rig.travel("Overhead")
+			navigation_agent_3d.avoidance_mask = 0
 
 
 func die() -> void:
@@ -38,3 +57,26 @@ func die() -> void:
 
 func _on_rig_heavy_attack() -> void:
 	area_attack.deal_damage(20.0, 0.0)
+	navigation_agent_3d.avoidance_mask = 0
+
+
+func orient_rig(target_position: Vector3) -> void:
+	target_position.y = rig.global_position.y
+	if rig.global_position.is_equal_approx(target_position):
+		return
+	rig.look_at(target_position, Vector3.UP, true)
+
+
+func get_local_navigation_direction() -> Vector3:
+	var local_destination := navigation_agent_3d.get_next_path_position() - global_position
+	return local_destination.normalized()
+
+
+func _on_navigation_agent_3d_velocity_computed(safe_velocity: Vector3) -> void:
+	if safe_velocity.length() > RUN_VELOCITY_THRESHOLD:
+		rig.run_weight_target = 1.0
+	else:
+		rig.run_weight_target = 0.0
+	
+	velocity = safe_velocity
+	move_and_slide()
