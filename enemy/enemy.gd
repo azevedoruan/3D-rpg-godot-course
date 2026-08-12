@@ -7,6 +7,8 @@ var velocity_target := Vector3.ZERO
 @export var max_health: float = 20.0
 @export var xp_value: int = 25
 @export var speed: float = 5.0
+@export var shields: Array[PackedScene]
+@export var swords: Array[PackedScene]
 
 @onready var rig: Rig = $Rig
 @onready var health_component: HealthComponent = $HealthComponent
@@ -21,6 +23,8 @@ func _ready() -> void:
 	rig.set_active_mesh(rig.villagers_meshes.pick_random())
 	health_component.update_max_health(max_health)
 	health_component.defeat.connect(die)
+	rig.replace_weapon(rig.left_weapon_slot, shields.pick_random())
+	rig.replace_weapon(rig.right_weapon_slot, swords.pick_random())
 
 
 func _physics_process(_delta: float) -> void:
@@ -53,6 +57,8 @@ func die() -> void:
 	rig.travel("Defeat")
 	collision_shape_3d.disabled = true
 	set_physics_process(false)
+	navigation_agent_3d.target_position = global_position
+	navigation_agent_3d.velocity = Vector3.ZERO
 
 
 func _on_rig_heavy_attack() -> void:
